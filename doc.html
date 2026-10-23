@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beep Proof of Work: 1-page doc</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; font-family:Inter,system-ui,sans-serif; background:#fffbea; color:#1a1a1a; line-height:1.6; }
+  .wrap { max-width:760px; margin:0 auto; padding:28px 16px 60px; }
+  h1 { font-size:28px; margin:0 0 4px; } h2 { font-size:20px; margin:32px 0 8px; border-bottom:3px solid #ffcc00; display:inline-block; }
+  .meta { color:#666; font-size:14px; }
+  a { color:#1a1a1a; }
+  blockquote { margin:8px 0; padding:8px 14px; background:#fff; border-left:4px solid #ffcc00; border-radius:6px; font-size:15px; }
+  .shots { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; margin-top:10px; }
+  .shots img { width:100%; border:1px solid #ddd; border-radius:8px; }
+  .shots figcaption { font-size:12px; color:#666; }
+  table { border-collapse:collapse; width:100%; font-size:15px; } td { border-top:1px solid #eee; padding:8px 4px; vertical-align:top; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Beep Proof of Work</h1>
+  <div class="meta">Manohar Kumar Sah · Beep Founder's Office task · October 2026<br>
+  Live tool: <a href="https://beep-proof-of-work.vercel.app">beep-proof-of-work.vercel.app</a></div>
+
+  <h2>The 3 problems</h2>
+  <p>I read through Beep's Google Play reviews (4.0 stars, about 4,760 reviews, 694 of them 1 star) and looked for complaints that kept coming up. The three biggest ones are connected. A student comes to Beep to learn, get certified and get a job, and trust drops at each step.</p>
+
+  <p><b>1. The certificate does not really prove skill.</b> The test before the paid certificate is short and basic, so neither students nor recruiters take it seriously.</p>
+  <blockquote>"the assessment is based on only 6 basic questions, which may not accurately reflect a person's actual skill level" (Pooja Avasthi)</blockquote>
+  <blockquote>"The questions in the basic survey were too simple for me to pay Rs. 149" (Yashita Sharma)</blockquote>
+
+  <p><b>2. Pricing feels unclear, and students are starting to call it fake.</b> The price changes, students learn late that the certificate is paid, there are a lot of purchase prompts, and a 15 minute discount timer adds pressure.</p>
+  <blockquote>"This is a fake app. They claimed a certificate for 199 rupees and then charged me 99 rupees, then asked for 149 rupees." (1 star, 5 October 2026)</blockquote>
+  <blockquote>"reducing frequent purchase prompts would also enhance the overall use" (Tamalika Ghosh)</blockquote>
+
+  <p><b>3. After the certificate there is no clear way to a job.</b></p>
+  <blockquote>"I am yet to find any opportunities even though the sample profile I created was very generic and relating to an industry which has plentiful jobs" (Hamza Agha, marked helpful by 37 people)</blockquote>
+  <blockquote>"the 'AI' tag is overhyped. Job suggestions are pretty basic... Some job listings are outdated too." (3 stars)</blockquote>
+
+  <p><b>Something else I noticed:</b> many 4 star reviews from early June 2026 follow the same pattern, and one even starts with "You can write:". It looks like a campus review drive, so the 4.0 rating probably makes users look happier than they are. That is why I gave more weight to the 1 star reviews.</p>
+
+  <div class="shots">
+    <figure><img src="proof/1-pricing-1star-fake-promise.jpg" alt="1 star review about pricing"><figcaption>Pricing complaint, 1 star</figcaption></figure>
+    <figure><img src="proof/2-no-opportunities-37-helpful.jpg" alt="Review about no opportunities"><figcaption>No opportunities, 37 helpful</figcaption></figure>
+    <figure><img src="proof/3-only-6-questions-and-ai-overhyped.jpg" alt="6 questions and AI overhyped reviews"><figcaption>6 basic questions; AI overhyped</figcaption></figure>
+    <figure><img src="proof/4-purchase-prompts-cert-value-unclear.jpg" alt="Purchase prompts review"><figcaption>Too many purchase prompts</figcaption></figure>
+    <figure><img src="proof/5-templated-review-you-can-write.jpg" alt="Templated review"><figcaption>"You can write:" review</figcaption></figure>
+  </div>
+
+  <h2>What I built</h2>
+  <p>Most people would build a quiz or a mock interview, but that is just a longer version of the 6 question test. What a recruiter really wants to know is whether the student can do the job. So I built something that produces proof of work.</p>
+  <table>
+    <tr><td><b>1</b></td><td>The student pastes any real internship post (Internshala, LinkedIn, Naukri or Beep).</td></tr>
+    <tr><td><b>2</b></td><td>The AI reads it like a hiring manager. It picks out the skills that matter and creates the actual first-week task for that role, with the data or brief included.</td></tr>
+    <tr><td><b>3</b></td><td>The student does the task in about 20 minutes. Hinglish is fine, because it grades the work and not the English.</td></tr>
+    <tr><td><b>4</b></td><td>The AI grades it against a rubric built from the job post. The student gets a score, a decision (Shortlist, Maybe or Not yet), the fixes to make first and a model answer.</td></tr>
+    <tr><td><b>5</b></td><td>The student gets a proof link to send with the application. The server signs it, so the recruiter sees "Verified by Beep", or a warning if anyone changed the score.</td></tr>
+  </table>
+  <p>How it covers the problems: it fixes problem 1 because it is real work and not 6 questions. It fixes problem 3 because every check starts from a real job and ends with a link to apply with. It helps problem 2 because Beep gives value before asking for money, and the paid certificate then sits on top of proof the student already has.</p>
+  <p>How Beep could ship it: put a "Prove it for this job" button on every internship listing, and show the proof link on the student's profile next to their certificates.</p>
+  <figure class="shots" style="grid-template-columns:1fr;max-width:420px"><img src="proof/6-tool-recruiter-proof-view.jpg" alt="Recruiter view of a proof link"><figcaption>What a recruiter sees when they open a proof link</figcaption></figure>
+
+  <h2>The number</h2>
+  <p><b>Main metric: application rate after a skill check</b>, meaning the share of students who finish a task and then apply to that job with their proof link.</p>
+  <p><b>Target:</b> at least 30% of students who finish a task copy or share their proof link. Students who get Shortlist or Maybe should apply at 1.5 times the rate of the current listing flow.</p>
+  <p><b>How we would know in 7 days:</b> run an A/B test. Half of new users see the "Prove it" button and half see the normal flow. We track task created, work submitted, link shared and applied. The API already logs task and grade events. On day 7 we compare apply rates. As a guardrail, new 1 star reviews saying "fake" or "paid" should not go up.</p>
+  <p><b>Second number:</b> certificate purchases among students who score Shortlist. A student who already has proof is a warm buyer.</p>
+
+  <h2>AI tools I used</h2>
+  <p><b>Google Gemini 3 Flash</b> powers the tool. It turns a job post into a task and rubric, then grades the work. If it is busy, the tool falls back to Gemini 3.1 Flash Lite.<br>
+  <b>Claude Code</b> helped me collect the Play Store evidence and write the code.<br>
+  <b>Vercel</b> hosts the page and a small server function, so the API key stays hidden and the proof links can be signed.</p>
+
+  <h2>Prompts and workflow</h2>
+  <p><b>My workflow:</b> (1) I read the Play Store reviews and grouped the complaints into 3 problems. (2) My first version was a quiz, but I dropped it because it was just a longer version of Beep's 6 question test. (3) I rebuilt it as proof of work, tested it with real job posts and a Hinglish answer, then checked that the AI's maths was right. (4) I added signed links after noticing that anyone could edit the score in the URL.</p>
+  <p><b>System prompt (sets the AI's role):</b></p>
+  <blockquote>You are a hiring manager at an Indian company hiring interns/freshers, mostly from Tier 2/3 colleges. You judge WORK, not English. Students may write in Hinglish; never penalise language, only substance. Be honest and specific, never generic.</blockquote>
+  <p><b>Prompt 1 (job post to task):</b></p>
+  <blockquote>Here is a real internship/job post. 1. Extract the role and the 3 most important skills the post really needs. 2. Design ONE realistic work task this company's intern would get in week 1, doable in about 20 minutes with no paid tools. Include ALL material needed inline (a small messy data table, a product brief, a customer complaint, sample code). 3. Write the hidden grading rubric (4 criteria, each tied to a skill from the post). Reply in JSON.</blockquote>
+  <p><b>Prompt 2 (grading):</b></p>
+  <blockquote>Grade the student's submission strictly against the rubric, like a real hiring manager deciding whether to shortlist. Return a score out of 100, a decision (Shortlist, Maybe, Not yet), evidence for each rubric point, the best part, 3 fixes in order, a short model answer, apply advice, and one proof line a recruiter would read. Reply in JSON.</blockquote>
+  <p>Asking for JSON lets the page show clean sections. After grading, the server builds the proof from its own result and signs it, so the student cannot change the score.</p>
+</div>
+</body>
+</html>

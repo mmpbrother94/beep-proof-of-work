@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beep Proof of Work</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#fffbea; --card:#fff; --ink:#1a1a1a; --muted:#666; --brand:#ffcc00; --ok:#1a9e55; --mid:#e08a00; --bad:#d23b3b; --line:#eee; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--ink); }
+  .wrap { max-width:720px; margin:0 auto; padding:24px 16px 60px; }
+  .logo { font-weight:800; font-size:22px; } .logo span { background:var(--brand); padding:2px 8px; border-radius:6px; }
+  h1 { font-size:28px; line-height:1.2; margin:18px 0 8px; }
+  p.sub { color:var(--muted); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; box-shadow:0 2px 10px #0000000a; }
+  label { font-weight:600; font-size:14px; display:block; margin:12px 0 6px; }
+  input, textarea { width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; font:inherit; font-size:16px; }
+  textarea { min-height:140px; resize:vertical; }
+  button { background:var(--ink); color:#fff; border:0; padding:14px 18px; border-radius:10px; font:inherit; font-weight:600; font-size:16px; cursor:pointer; width:100%; margin-top:14px; }
+  button.ghost { background:transparent; color:var(--ink); border:1px solid #ddd; }
+  button:disabled { opacity:.5; cursor:wait; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip { background:#f4f4f4; border:1px solid #e5e5e5; padding:6px 12px; border-radius:20px; font-size:14px; width:auto; margin:0; color:var(--ink); font-weight:400; }
+  .steps { display:flex; gap:8px; margin:16px 0; font-size:13px; } .steps div { flex:1; padding:8px; border-radius:8px; background:#fff; border:1px solid var(--line); text-align:center; }
+  .steps .on { background:var(--brand); border-color:var(--brand); font-weight:600; }
+  .tag { display:inline-block; background:#f4f4f4; border-radius:6px; padding:3px 8px; font-size:13px; margin:2px 4px 2px 0; }
+  pre { background:#f7f7f7; padding:12px; border-radius:8px; white-space:pre-wrap; font-size:14px; overflow-x:auto; }
+  .score { font-size:56px; font-weight:800; } .pill { display:inline-block; padding:4px 12px; border-radius:20px; color:#fff; font-weight:600; }
+  .row { display:flex; justify-content:space-between; gap:12px; border-top:1px solid var(--line); padding:10px 0; font-size:14px; }
+  ul { padding-left:20px; } li { margin:6px 0; }
+  .muted { color:var(--muted); font-size:13px; } .err { color:var(--bad); }
+  .verified { border:2px solid var(--brand); }
+  .hide { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><span>Beep</span> Proof of Work</div>
+
+  <!-- Step 1: paste a real job post -->
+  <section id="start">
+    <h1>Don't just get a certificate. Show the work they'll hire you for.</h1>
+    <p class="sub">Paste any real internship post (Internshala, LinkedIn, Naukri, Beep). AI turns it into the actual task that company's intern would do. Do it in 20 min, get graded like a real hiring manager would, and get a proof link to send with your application.</p>
+    <div class="steps"><div class="on">1. Paste job</div><div>2. Do the task</div><div>3. Get proof link</div></div>
+    <div class="card">
+      <label>Your name</label>
+      <input id="name" placeholder="e.g. Priya Sharma">
+      <label>Paste the internship / job post</label>
+      <textarea id="job" placeholder="Paste the full post: role, responsibilities, skills required..."></textarea>
+      <div class="muted">No post handy? Try a sample:</div>
+      <div class="chips" id="samples"></div>
+      <button id="go">Turn it into a real task →</button>
+    </div>
+  </section>
+
+  <!-- Step 2: do the task -->
+  <section id="taskView" class="hide">
+    <div class="steps"><div>1. Paste job</div><div class="on">2. Do the task</div><div>3. Get proof link</div></div>
+    <div class="card" id="taskCard"></div>
+    <div class="card">
+      <label>Your work (English or Hinglish, both are fine)</label>
+      <textarea id="work" style="min-height:220px" placeholder="Type your answer / analysis / copy / code here..."></textarea>
+      <button id="submit">Submit to the hiring manager</button>
+      <button id="back" class="ghost">Use a different job post</button>
+    </div>
+  </section>
+
+  <!-- Step 3: result + proof -->
+  <section id="result" class="hide"></section>
+
+  <p id="status" class="muted"></p>
+  <p class="muted" style="text-align:center;margin-top:40px">Built by Manohar Kumar Sah · Beep Founder's Office task</p>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let state = { name:"", job:"", task:null };
+
+const SAMPLES = {
+  "Data Analyst Intern": "Data Analyst Intern – D2C skincare brand (Indore, remote OK). Stipend ₹10,000/month. Responsibilities: clean and analyse weekly sales and returns data in Excel/Google Sheets, build simple dashboards, find which products and cities drive returns, present insights to the founder. Skills: Excel (pivot tables, lookups), basic statistics, clear communication.",
+  "Digital Marketing Intern": "Digital Marketing Intern – Coaching institute for government exams (Jaipur). Stipend ₹8,000/month. Responsibilities: write Instagram and WhatsApp content in Hinglish, plan a 1-week content calendar, track reel performance, suggest ideas to increase demo-class sign-ups. Skills: copywriting, social media analytics, understanding of Tier 2/3 student audience.",
+  "Python Developer Intern": "Python Developer Intern – Logistics startup (Pune). Stipend ₹15,000/month. Responsibilities: write Python scripts to clean delivery data, fix bugs in existing scripts, write simple functions with tests, document your code. Skills: Python basics, lists/dicts, debugging, writing readable code."
+};
+Object.keys(SAMPLES).forEach(k => {
+  const b = document.createElement("button"); b.className = "chip"; b.textContent = k;
+  b.onclick = () => $("job").value = SAMPLES[k]; $("samples").appendChild(b);
+});
+
+async function ai(body) {
+  const r = await fetch("/api/ai", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || "Something went wrong");
+  return d;
+}
+function busy(on, msg="") { document.querySelectorAll("button").forEach(b => b.disabled = on); $("status").textContent = msg; $("status").className = "muted"; }
+function fail(e) { busy(false); $("status").textContent = "Error: " + e.message + " (please try again)"; $("status").className = "err"; }
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function show(id) { ["start","taskView","result"].forEach(s => $(s).classList.toggle("hide", s !== id)); window.scrollTo(0,0); }
+
+$("go").onclick = async () => {
+  state.name = $("name").value.trim() || "Student";
+  state.job = $("job").value.trim();
+  if (state.job.length < 40) return $("job").focus();
+  busy(true, "Reading the job post and designing your task...");
+  try {
+    const t = state.task = await ai({ mode:"task", job:state.job });
+    $("taskCard").innerHTML = `
+      <div class="muted">${esc(t.company_type)} · ${esc(t.role)}</div>
+      <h2 style="margin:6px 0">${esc(t.task_title)}</h2>
+      <div>${(t.skills||[]).map(s=>`<span class="tag">${esc(s)}</span>`).join("")}</div>
+      <p>${esc(t.task_brief)}</p>
+      <pre>${esc(t.material)}</pre>
+      <p><b>Submit:</b> ${esc(t.deliverable)}</p>
+      <div class="muted">⏱ About 20 minutes. You're graded on: ${(t.rubric||[]).map(r=>esc(r.criterion)).join(" · ")}</div>`;
+    busy(false); show("taskView");
+  } catch (e) { fail(e); }
+};
+$("back").onclick = () => show("start");
+
+$("submit").onclick = async () => {
+  const work = $("work").value.trim();
+  if (work.length < 20) return $("work").focus();
+  busy(true, "The hiring manager is reviewing your work...");
+  try {
+    const g = await ai({ mode:"grade", job:state.job, task:state.task, work, name:state.name });
+    busy(false); renderResult(g, work);
+  } catch (e) { fail(e); }
+};
+
+const color = d => d === "Shortlist" ? "var(--ok)" : d === "Maybe" ? "var(--mid)" : "var(--bad)";
+
+function renderResult(g, work) {
+  // The server builds and signs the proof, so the link can't be edited without it showing.
+  const link = location.origin + location.pathname + "#proof=" + encodeProof({ proof:g.proof, sig:g.sig });
+  $("result").innerHTML = `
+    <div class="steps"><div>1. Paste job</div><div>2. Do the task</div><div class="on">3. Get proof link</div></div>
+    <div class="card">
+      <div class="muted">${esc(state.task.role)} · ${esc(state.task.company_type)}</div>
+      <div class="score">${esc(g.score)}<span style="font-size:20px">/100</span></div>
+      <span class="pill" style="background:${color(g.decision)}">${esc(g.decision)}</span>
+      <p><i>"${esc(g.manager_note)}"</i> (Hiring manager)</p>
+      <p><b>👉 ${esc(g.apply_advice)}</b></p>
+    </div>
+    <div class="card"><b>Rubric</b>
+      ${(g.rubric_scores||[]).map(r=>`<div class="row"><span><b>${esc(r.criterion)}</b><br><span class="muted">${esc(r.evidence)}</span></span><b>${esc(r.score)}/10</b></div>`).join("")}</div>
+    <div class="card"><b>⭐ Best part:</b> ${esc(g.best_part)}
+      <p><b>🔧 Fix first</b></p><ul>${(g.fix_first||[]).map(f=>`<li>${esc(f)}</li>`).join("")}</ul>
+      <p><b>📘 What a strong answer looks like</b></p><pre>${esc(g.improved_example)}</pre></div>
+    <div class="card verified"><b>🔗 Your proof-of-work link</b>
+      <p class="muted">Add this to your application, resume or LinkedIn. A recruiter sees the real task, your actual work and the score, not just a certificate.</p>
+      <input id="link" readonly value="${esc(link)}">
+      <button id="copy">Copy link</button>
+      <button class="ghost" onclick="window.open('https://wa.me/?text='+encodeURIComponent('My proof of work for ${esc(state.task.role)}: ${esc(link)}'))">Share on WhatsApp</button>
+    </div>
+    <button class="ghost" id="redo">Redo the task with the fixes</button>`;
+  $("copy").onclick = () => { navigator.clipboard?.writeText(link); $("copy").textContent = "Copied ✓"; };
+  $("redo").onclick = () => show("taskView");
+  show("result");
+}
+
+// The proof card lives entirely in the URL, so there's no database and it works for anyone with the link.
+function encodeProof(o) {
+  const bytes = new TextEncoder().encode(JSON.stringify(o));
+  return btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function decodeProof(s) {
+  const bin = atob(s.replace(/-/g,"+").replace(/_/g,"/"));
+  return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))));
+}
+
+// Recruiter view: opened from a shared proof link.
+if (location.hash.startsWith("#proof=")) {
+  try {
+    const { proof:p, sig } = decodeProof(location.hash.slice(7));
+    $("start").classList.add("hide");
+    $("result").classList.remove("hide");
+    $("result").innerHTML = `
+      <div class="card verified">
+        <div id="badge" class="muted">Checking authenticity...</div>
+        <div class="muted">PROOF OF WORK · ${esc(p.dt)}</div>
+        <h1 style="margin:6px 0">${esc(p.n)}</h1>
+        <div>${esc(p.r)} · ${esc(p.c)}</div>
+        <div class="score">${esc(p.s)}<span style="font-size:20px">/100</span></div>
+        <span class="pill" style="background:${color(p.d)}">${esc(p.d)}</span>
+        <p><b>${esc(p.p)}</b></p>
+      </div>
+      <div class="card"><b>Task: ${esc(p.t)}</b><p>${esc(p.b)}</p>
+        ${(p.rs||[]).map(([c,s])=>`<div class="row"><span>${esc(c)}</span><b>${esc(s)}/10</b></div>`).join("")}</div>
+      <div class="card"><b>Their actual submission</b><pre>${esc(p.w)}</pre></div>
+      <p class="muted">Graded by AI against the job's requirements. Want to prove your own skills? <a href="${location.pathname}">Try it free</a>.</p>`;
+    ai({ mode:"verify", proof:p, sig }).then(v => {
+      $("badge").innerHTML = v.valid
+        ? `<span class="pill" style="background:var(--ok)">✓ Verified by Beep: score not edited</span>`
+        : `<span class="pill" style="background:var(--bad)">⚠ Not verified: this proof was changed after grading</span>`;
+    }).catch(() => $("badge").textContent = "Could not check authenticity right now.");
+  } catch { /* bad link: fall back to the normal start screen */ }
+}
+</script>
+</body>
+</html>
